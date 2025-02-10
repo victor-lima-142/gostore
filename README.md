@@ -59,15 +59,7 @@ The following diagram shows the architecture of the project, following the flow 
 
 Below is a diagram representing a simple API microservice architecture following the pattern: controllers > services > repositories > entities.
 
-flowchart TD
-    subgraph API Microservice
-        direction TB
-        Controller["Controller"] -->|Calls| Service["Service"]
-        Service -->|Uses| Repository["Repository"]
-        Repository -->|Accesses| Entity["Entity"]
-    end
-
-    Database[("Database")] -->|Persists| Entity
+![diagram about the arch](image.png)
 
 Explanation
 
