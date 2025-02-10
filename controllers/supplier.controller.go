@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"net/http"
 	"store/domain/entities"
 	"store/services"
 	"store/utils"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // SupplierController is an interface that defines the methods for the supplier controller.
@@ -52,16 +54,16 @@ func (c *supplierController) CreateSupplier(ctx *gin.Context) {
 	var supplier entities.Supplier
 
 	if err := ctx.ShouldBindJSON(&supplier); err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
 	if err := c.supplierService.Create(ctx, &supplier); err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(201, supplier)
+	ctx.JSON(http.StatusCreated, supplier)
 }
 
 // Handles the HTTP GET request to retrieve all suppliers from the database.
@@ -73,12 +75,16 @@ func (c *supplierController) CreateSupplier(ctx *gin.Context) {
 func (c *supplierController) GetAllSuppliers(ctx *gin.Context) {
 	suppliers, err := c.supplierService.GetAll(ctx)
 
+	if err == gorm.ErrRecordNotFound {
+		ctx.JSON(http.StatusNotFound, gin.H{"message": "No suppliers found"})
+		return
+	}
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(200, suppliers)
+	ctx.JSON(http.StatusOK, suppliers)
 }
 
 // Handles the HTTP GET request to retrieve a supplier by its ID.
@@ -92,12 +98,16 @@ func (c *supplierController) GetSupplierByID(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	supplier, err := c.supplierService.GetByID(ctx, utils.StringToUint(id))
+	if err == gorm.ErrRecordNotFound {
+		ctx.JSON(http.StatusNotFound, gin.H{"message": "Supplier not found"})
+		return
+	}
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(200, supplier)
+	ctx.JSON(http.StatusOK, supplier)
 }
 
 // Handles the HTTP PUT request to update a supplier in the database.
@@ -114,16 +124,16 @@ func (c *supplierController) UpdateSupplier(ctx *gin.Context) {
 	var supplier entities.Supplier
 
 	if err := ctx.ShouldBindJSON(&supplier); err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
 	if err := c.supplierService.Update(ctx, &supplier); err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(200, supplier)
+	ctx.JSON(http.StatusOK, supplier)
 }
 
 // Handles the HTTP DELETE request for removing a supplier by its ID.
@@ -138,11 +148,11 @@ func (c *supplierController) DeleteSupplier(ctx *gin.Context) {
 
 	err := c.supplierService.Delete(ctx, utils.StringToUint(id))
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(200, gin.H{"message": "Supplier deleted successfully"})
+	ctx.JSON(http.StatusOK, gin.H{"message": "Supplier deleted successfully"})
 }
 
 // Handles the HTTP DELETE request for removing multiple suppliers by their IDs.
@@ -157,9 +167,9 @@ func (c *supplierController) DeleteAllSuppliers(ctx *gin.Context) {
 
 	err := c.supplierService.DeleteAll(ctx, utils.StringArrToUintArr(ids))
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(200, gin.H{"message": "All suppliers deleted successfully"})
+	ctx.JSON(http.StatusOK, gin.H{"message": "All suppliers deleted successfully"})
 }

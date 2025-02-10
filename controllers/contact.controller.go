@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"net/http"
 	"store/domain/entities"
 	"store/services"
 	"store/utils"
@@ -51,15 +52,15 @@ func (c *contactController) CreateContact(ctx *gin.Context) {
 
 	err := ctx.ShouldBindJSON(&contact)
 	if err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	err = c.contactService.Create(ctx, &contact)
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
-	ctx.JSON(201, contact)
+	ctx.JSON(http.StatusCreated, contact)
 }
 
 // Retrieves all contacts from the database.
@@ -74,10 +75,10 @@ func (c *contactController) CreateContact(ctx *gin.Context) {
 func (c *contactController) GetAllContacts(ctx *gin.Context) {
 	contacts, err := c.contactService.GetAll(ctx)
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
-	ctx.JSON(200, contacts)
+	ctx.JSON(http.StatusCreated, contacts)
 }
 
 // Handles the HTTP request for retrieving a contact by its ID.
@@ -92,10 +93,10 @@ func (c *contactController) GetContactByID(ctx *gin.Context) {
 
 	contact, err := c.contactService.GetByID(ctx, utils.StringToUint(id))
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
-	ctx.JSON(200, contact)
+	ctx.JSON(http.StatusCreated, contact)
 }
 
 // Handles the HTTP request for updating a contact.
@@ -111,15 +112,15 @@ func (c *contactController) UpdateContact(ctx *gin.Context) {
 
 	err := ctx.ShouldBindJSON(&contact)
 	if err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	err = c.contactService.Update(ctx, &contact)
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
-	ctx.JSON(200, contact)
+	ctx.JSON(http.StatusCreated, contact)
 }
 
 // Handles the HTTP request for deleting a contact by its ID.
@@ -134,10 +135,10 @@ func (c *contactController) DeleteContact(ctx *gin.Context) {
 
 	err := c.contactService.Delete(ctx, utils.StringToUint(id))
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
-	ctx.JSON(200, gin.H{"message": "Contact deleted successfully"})
+	ctx.JSON(http.StatusCreated, gin.H{"message": "Contact deleted successfully"})
 }
 
 // Handles the HTTP request for deleting multiple contacts by their IDs.
@@ -153,8 +154,8 @@ func (c *contactController) DeleteAllContacts(ctx *gin.Context) {
 
 	err := c.contactService.DeleteAll(ctx, utils.StringArrToUintArr(ids))
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
-	ctx.JSON(200, gin.H{"message": "All contacts deleted successfully"})
+	ctx.JSON(http.StatusCreated, gin.H{"message": "All contacts deleted successfully"})
 }

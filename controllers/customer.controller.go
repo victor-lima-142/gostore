@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"net/http"
 	"store/domain/entities"
 	"store/services"
 	"store/utils"
@@ -50,16 +51,16 @@ func (c *customerController) CreateCustomer(ctx *gin.Context) {
 	var customer entities.Customer
 
 	if err := ctx.ShouldBindJSON(&customer); err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	if err := c.customerService.Create(ctx, &customer); err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(201, customer)
+	ctx.JSON(http.StatusCreated, customer)
 }
 
 // Handles the HTTP request for getting all customers from the database.
@@ -72,11 +73,11 @@ func (c *customerController) GetAllCustomers(ctx *gin.Context) {
 	customers, err := c.customerService.GetAll(ctx)
 
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(200, customers)
+	ctx.JSON(http.StatusCreated, customers)
 }
 
 // Handles the HTTP request for retrieving a customer by its ID.
@@ -91,11 +92,11 @@ func (c *customerController) GetCustomerByID(ctx *gin.Context) {
 
 	contact, err := c.customerService.GetByID(ctx, utils.StringToUint(id))
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(200, contact)
+	ctx.JSON(http.StatusCreated, contact)
 }
 
 // Handles the HTTP request for updating a customer.
@@ -110,16 +111,16 @@ func (c *customerController) UpdateCustomer(ctx *gin.Context) {
 	var customer entities.Customer
 
 	if err := ctx.ShouldBindJSON(&customer); err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	if err := c.customerService.Update(ctx, &customer); err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(200, customer)
+	ctx.JSON(http.StatusCreated, customer)
 }
 
 // Handles the HTTP request for deleting a customer by its ID.
@@ -134,11 +135,11 @@ func (c *customerController) DeleteCustomer(ctx *gin.Context) {
 
 	err := c.customerService.Delete(ctx, utils.StringToUint(id))
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(200, gin.H{"message": "Customer deleted successfully"})
+	ctx.JSON(http.StatusCreated, gin.H{"message": "Customer deleted successfully"})
 }
 
 // Handles the HTTP request for deleting multiple customers by their IDs.
@@ -154,9 +155,9 @@ func (c *customerController) DeleteAllCustomers(ctx *gin.Context) {
 
 	err := c.customerService.DeleteAll(ctx, utils.StringArrToUintArr(ids))
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(200, gin.H{"message": "All customers deleted successfully"})
+	ctx.JSON(http.StatusCreated, gin.H{"message": "All customers deleted successfully"})
 }
