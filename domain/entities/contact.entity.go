@@ -18,8 +18,8 @@ type Contact struct {
 	State          string `gorm:"not null" json:"state"`              // state of the contact for address
 	Country        string `gorm:"not null" json:"country"`            // country of the contact for address
 	Email          string `json:"email"`                              // email address of the contact
-	CustomerID     uint   `json:"customer_id"`                        // Foreign key for Customer (one-to-one)
-	SupplierID     uint   `json:"supplier_id"`                        // Foreign key for Supplier (one-to-one)
+	CustomerID     uint   `gorm:"index" json:"customer_id"`           // Foreign key for Customer (one-to-one)
+	SupplierID     uint   `gorm:"index" json:"supplier_id"`           // Foreign key for Supplier (one-to-one)
 }
 
 // TableName overrides the table name used by Contact to `sales.contacts`.
