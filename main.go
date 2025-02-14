@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"store/controllers"
 	"store/domain/entities"
 	"sync"
@@ -15,6 +16,7 @@ import (
 // Main starts the Gin server with the API routes and database connection.
 func main() {
 	app := gin.Default()
+	app.Use(JSONMiddleware())
 	db := GetDB()
 	controllers.InitRoutes(app, db)
 	app.Run(":8080")
@@ -69,4 +71,22 @@ func AutoMigrate() {
 		log.Fatalf("Migration failed: %v", err)
 	}
 	log.Println("AutoMigrate completed successfully")
+}
+
+// JSONMiddleware is a middleware function that sets the Accept header to "application/json"
+// and the Content-Type header to "application/json". It is used to ensure that the responses
+// are in JSON format.
+//
+// Its aborts the request if the Content-Type header is not "application/json".
+func JSONMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if c.GetHeader("Content-Type") != "application/json" {
+			c.JSON(http.StatusUnsupportedMediaType, gin.H{"error": "Content-Type must be application/json"})
+			c.Abort()
+			return
+		}
+		c.Request.Header.Set("Accept", "application/json")
+		c.Header("Content-Type", "application/json")
+		c.Next()
+	}
 }
