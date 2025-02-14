@@ -78,7 +78,7 @@ func (c *contactController) GetAllContacts(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
-	ctx.JSON(http.StatusCreated, contacts)
+	ctx.JSON(http.StatusOK, contacts)
 }
 
 // Handles the HTTP request for retrieving a contact by its ID.
@@ -96,7 +96,7 @@ func (c *contactController) GetContactByID(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
-	ctx.JSON(http.StatusCreated, contact)
+	ctx.JSON(http.StatusOK, contact)
 }
 
 // Handles the HTTP request for updating a contact.

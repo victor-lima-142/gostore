@@ -113,7 +113,7 @@ func (c *productController) UpdateProduct(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, product)
+	ctx.JSON(http.StatusCreated, product)
 }
 
 // Handles the HTTP request for deleting a product by its ID.

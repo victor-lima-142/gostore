@@ -77,7 +77,7 @@ func (c *customerController) GetAllCustomers(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, customers)
+	ctx.JSON(http.StatusOK, customers)
 }
 
 // Handles the HTTP request for retrieving a customer by its ID.
@@ -96,7 +96,7 @@ func (c *customerController) GetCustomerByID(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, contact)
+	ctx.JSON(http.StatusOK, contact)
 }
 
 // Handles the HTTP request for updating a customer.

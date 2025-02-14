@@ -99,7 +99,7 @@ func (c *orderController) UpdateOrder(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, order)
+	ctx.JSON(http.StatusCreated, order)
 }
 
 // Handles the HTTP request for deleting an order by its ID.

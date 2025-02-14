@@ -133,7 +133,7 @@ func (c *supplierController) UpdateSupplier(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, supplier)
+	ctx.JSON(http.StatusCreated, supplier)
 }
 
 // Handles the HTTP DELETE request for removing a supplier by its ID.
